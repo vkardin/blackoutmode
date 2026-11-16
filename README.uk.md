@@ -97,11 +97,11 @@ sh tools/build.sh
 | --- | --- |
 | **[Video Glow](https://vkardin.github.io/video-glow/)** | Підсвічування навколо відео в колір кадру. М’яке світіння, LED-стрічка і колір кімнати. [GitHub](https://github.com/vkardin/video-glow) |
 | **[Leveler](https://vkardin.github.io/leveler/)** | Рівна гучність будь-якого відео: діалоги гучніше, вибухи тихіше, підсилення і швидкість. [GitHub](https://github.com/vkardin/leveler) |
-| **[Video Drift](https://vkardin.github.io/video-drift/)** | Відео поверх інших вікон, субтитри, збереження позиції та нотатки до моментів. [GitHub](https://github.com/vkardin/video-drift) |
 | **[Snapt](https://vkardin.github.io/snapt/)** | Скриншоти, стрілки й підписи. Застосунок для Windows, macOS і Linux та розширення браузера. [GitHub](https://github.com/vkardin/snapt) |
-| **[UNI](https://vkardin.github.io/uni-homebot/)** | Домашній сервер у Telegram: застосунки, моніторинг, сповіщення та мінізастосунок. [GitHub](https://github.com/vkardin/uni-homebot) |
+| **[Video Drift](https://vkardin.github.io/video-drift/)** | Відео поверх інших вікон, субтитри, збереження позиції та нотатки до моментів. [GitHub](https://github.com/vkardin/video-drift) |
 | **[Коли Є](https://vkardin.github.io/koly/uk/)** | Графіки відключень світла по всіх областях України: статус зараз, зворотний відлік, сьогодні й завтра. Застосунок для Android і віджет для Windows. [GitHub](https://github.com/vkardin/koly) |
-| **[Tukk](https://vkardin.github.io/tukk/uk/)** | Жести телефоном для щоденних дій: струснути для ліхтарика, перевернути для тиші. Android, у розробці. [GitHub](https://github.com/vkardin/tukk) |
+| **[Tukk](https://vkardin.github.io/tukk/uk/)** | Жести телефоном для щоденних дій: струснути для ліхтарика, перевернути для тиші. Android. [GitHub](https://github.com/vkardin/tukk) |
+| **[UNI](https://vkardin.github.io/uni-homebot/)** | Домашній сервер у Telegram: застосунки, моніторинг, сповіщення та мінізастосунок. [GitHub](https://github.com/vkardin/uni-homebot) |
 
 [github.com/vkardin](https://github.com/vkardin) · Незалежні інструменти · відкритий код
 <!-- project-family:end -->
