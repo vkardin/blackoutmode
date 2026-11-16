@@ -1,0 +1,28 @@
+1 ICON "app.ico"
+1 24 "app.manifest"
+
+1 VERSIONINFO
+FILEVERSION 2,3,0,0
+PRODUCTVERSION 2,3,0,0
+FILEOS 0x40004
+FILETYPE 0x1
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "041904B0"
+    BEGIN
+      VALUE "FileDescription", "Режим отключения"
+      VALUE "CompanyName", "vkardin"
+      VALUE "LegalCopyright", "vkardin"
+      VALUE "InternalName", "BlackoutMode"
+      VALUE "ProductName", "BlackoutMode"
+      VALUE "FileVersion", "2.3.0"
+      VALUE "ProductVersion", "2.3.0"
+      VALUE "OriginalFilename", "BlackoutMode-2.3.0.exe"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x419, 1200
+  END
+END

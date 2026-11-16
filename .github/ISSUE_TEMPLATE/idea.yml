@@ -1,0 +1,21 @@
+name: "💡 Идея / Ідея / Idea"
+description: "Предложить улучшение · Запропонувати покращення · Suggest an improvement"
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: "Что добавить или изменить? / Що додати чи змінити? / What should be added or changed?"
+      description: "Опишите идею своими словами. Можно на русском, украинском или английском."
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: "Зачем это нужно? / Навіщо це? / Why would it help?"
+      description: "Например: в какой ситуации без света это пригодится."
+  - type: input
+    id: laptop
+    attributes:
+      label: "Ноутбук / Laptop"
+      placeholder: "Lenovo Legion 5, ASUS Vivobook..."

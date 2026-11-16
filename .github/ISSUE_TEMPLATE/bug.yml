@@ -1,0 +1,32 @@
+name: "🐞 Ошибка / Помилка / Bug"
+description: "Что-то работает не так · Щось працює не так · Something doesn't work"
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: "Что случилось? / Що сталося? / What happened?"
+      description: "Что вы делали, что ожидали и что получилось. Скриншот очень помогает."
+    validations:
+      required: true
+  - type: input
+    id: laptop
+    attributes:
+      label: "Ноутбук / Laptop"
+      description: "Модель видна внизу страницы «Настройки»."
+      placeholder: "Lenovo Legion 5 82SA, HP Pavilion 15..."
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: "Версия BlackoutMode и Windows / BlackoutMode and Windows version"
+      placeholder: "2.3.0, Windows 11 24H2"
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: "Журнал / Log"
+      description: "«Настройки» → «Журнал» → последние строки. В журнале нет личных данных, кроме имён программ и пути к папке."
+      render: text

@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BlackoutMode</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='24' fill='%23111316'/%3E%3Cpath d='M55 12 26 53h18l-5 31 31-43H50z' fill='%23f2b84b'/%3E%3C/svg%3E">
+<style>
+@font-face{font-family:Geologica;font-weight:400;src:url(f/geologica-cyrillic-400-normal.woff2) format("woff2");unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Geologica;font-weight:400;src:url(f/geologica-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Geologica;font-weight:500;src:url(f/geologica-cyrillic-500-normal.woff2) format("woff2");unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Geologica;font-weight:500;src:url(f/geologica-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:Onest;font-weight:400;src:url(f/onest-cyrillic-400-normal.woff2) format("woff2");unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Onest;font-weight:400;src:url(f/onest-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Onest;font-weight:500;src:url(f/onest-cyrillic-500-normal.woff2) format("woff2");unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Onest;font-weight:500;src:url(f/onest-latin-500-normal.woff2) format("woff2")}
+:root{--bg:#0f1113;--panel:#15181b;--card:#1b1f23;--line:#2b3036;--txt:#eceef0;--sec:#aab1b9;--mut:#8f979f;--ok:#63d391;--acc:#f2b84b;--on:#1a1300;--maybe:#5a4a25;--bad:#ff8f7a}
+:root.light{--bg:#f6f5f2;--panel:#eeece7;--card:#ffffff;--line:#d9d6cf;--txt:#17191b;--sec:#50565c;--mut:#666c72;--ok:#1d7a45;--acc:#b9770a;--on:#ffffff;--maybe:#ecd9a8;--bad:#b3261e}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--txt);font:14px/1.4 Onest,"Segoe UI Variable","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+h1{margin:0;font:500 21px/1.2 Geologica,"Segoe UI Variable",sans-serif;letter-spacing:-.01em}
+.sub{margin:3px 0 0;color:var(--sec);font-size:13px}
+.app{min-height:100vh;display:flex;flex-wrap:wrap}
+nav{flex:1 1 172px;background:var(--panel);padding:12px 8px;display:flex;flex-direction:column;gap:2px}
+.brand{display:flex;align-items:center;gap:8px;padding:4px 10px 12px;font:500 14px Geologica,sans-serif}
+.brand svg{color:var(--acc)}
+nav .nv{display:flex;align-items:center;gap:10px;min-height:34px;padding:0 10px;border-radius:8px;border:0;background:none;width:100%;text-align:left;cursor:pointer;color:var(--sec)}
+nav .nv:hover{color:var(--txt)}
+nav .nv.on{color:var(--txt);background:color-mix(in srgb,var(--txt) 9%,transparent)}
+html{color-scheme:dark;scrollbar-color:var(--line) transparent;scrollbar-width:thin}
+html.light{color-scheme:light}
+main{flex:999 1 520px;min-width:0;padding:22px 26px 26px}
+.wrap{max-width:900px;display:flex;flex-direction:column;gap:18px}
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:26px}
+.metric{background:var(--card);border-radius:10px;padding:11px 14px}
+.metric .l,.lab{font-size:12px;color:var(--mut)}
+.lab{margin-bottom:4px}
+.metric .v{font:500 22px/1.2 Geologica,sans-serif;margin-top:2px}
+.metric .n{font-size:12px;color:var(--sec);margin-top:1px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:7px 0;min-height:38px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .d{font-size:12px;color:var(--sec);margin-top:1px}
+.row .r{flex:none;color:var(--sec);font-size:13px;display:flex;align-items:center;gap:10px}
+.row.pick{cursor:pointer}
+.row.sel .t{color:var(--acc)}
+button,select,input{font:inherit;color:inherit}
+.btn{min-height:32px;padding:0 13px;border-radius:8px;border:1px solid var(--line);background:transparent;cursor:pointer}
+.btn:hover{border-color:var(--sec)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--on);font-weight:500}
+.btn.sm{min-height:28px;padding:0 11px;font-size:13px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.sw{position:relative;flex:none;width:38px;height:22px;border:0;border-radius:11px;background:color-mix(in srgb,var(--txt) 18%,transparent);padding:0;cursor:pointer}
+.sw span{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:8px;background:var(--sec);transition:left .12s}
+.sw[aria-checked=true]{background:var(--acc)}
+.sw[aria-checked=true] span{left:19px;background:var(--on)}
+input[type=text],input[type=number],select{min-height:30px;border-radius:8px;border:1px solid var(--line);background:var(--card);padding:0 9px;max-width:220px;font-size:13px}
+input[type=number]{width:74px}
+input[type=checkbox]{width:17px;height:17px;accent-color:var(--acc)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.pill{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ok);white-space:nowrap}
+.pill.warn{color:var(--acc)}
+.bar{height:6px;border-radius:3px;background:var(--card);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.bar.bank i{background:var(--acc)}
+.bar.low i{background:var(--bad)}
+.en{display:grid;gap:12px}
+.en .top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:5px;font-size:13px;color:var(--sec);min-height:24px}
+.en .top b{font-weight:500;color:var(--txt);font-size:14px}
+.en .val{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:24px;padding:0 8px;margin:-2px -8px -2px 0;border-radius:7px;border:1px solid transparent;background:none;cursor:pointer;color:var(--txt);font-weight:500;font-size:14px}
+.chip svg{color:var(--mut)}
+.chip:hover{border-color:var(--line)}.chip:hover svg{color:var(--txt)}
+.en input{width:64px;min-height:24px;text-align:right}
+.tiny{min-height:24px;padding:0 9px;border-radius:7px;border:1px solid var(--line);background:none;cursor:pointer;font-size:12px;color:var(--sec)}
+.tiny:hover{border-color:var(--sec);color:var(--txt)}
+.chart{background:var(--card);border-radius:10px;padding:12px 14px 8px}
+.chart svg{display:block;width:100%;height:120px;overflow:visible}
+.chart .ax{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-top:4px}
+.chart .cap{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--sec);margin-bottom:8px}
+.chart .cap b{font-weight:500;color:var(--txt)}
+.day{display:flex;align-items:center;gap:10px;padding:3px 0}
+.day b{flex:none;width:44px;font-weight:400;font-size:13px;color:var(--sec)}
+.day div{flex:1;display:flex;height:16px;border-radius:5px;overflow:hidden;background:var(--card);position:relative}
+.day u{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--txt);box-shadow:0 0 0 1.5px var(--bg)}
+.day i.off{background:var(--acc)}.day i.maybe{background:var(--maybe)}
+.hours{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-top:6px}
+.legend{display:flex;gap:20px;margin-top:14px;font-size:13px;color:var(--sec)}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:8px}
+.note{border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.note .d{font-size:13px;color:var(--sec);margin-top:2px}
+.wz{border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:14px}
+.wz>div>b{font:500 16px Geologica,sans-serif}.wz .d{font-size:13px;color:var(--sec);margin-top:2px}
+.cap{display:flex;align-items:center;gap:9px;padding:4px 0;font-size:13px;color:var(--mut)}
+.cap i{flex:none;width:8px;height:8px;border-radius:4px;background:var(--line)}
+.cap.y{color:var(--txt)}.cap.y i{background:var(--ok)}
+.cap span{color:var(--mut);font-size:12px}
+.gain{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.gain b{font:500 22px Geologica,sans-serif;color:var(--ok)}
+.hb{display:flex;align-items:center;gap:12px;padding:5px 0}
+.hb b{flex:none;width:200px;font-weight:400;font-size:13px;color:var(--sec)}
+.hb div{flex:1;height:8px;border-radius:4px;background:var(--card);overflow:hidden}
+.hb div i{display:block;height:100%;background:var(--acc)}
+.hb span{flex:none;width:70px;text-align:right;font-size:14px}
+.box{background:var(--card);border-radius:10px;padding:2px 14px}
+.mut{color:var(--mut);font-size:13px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 18px;max-width:80%;display:none}
+.panel{min-height:100vh;background:var(--panel);padding:16px;display:flex;flex-direction:column;gap:12px}
+.host .panel{min-height:0}
+.host main{padding-top:40px}
+.host nav{padding-top:10px}
+.tbar{position:fixed;top:0;left:0;right:0;height:34px;display:flex;justify-content:flex-end;align-items:stretch;z-index:5;user-select:none}
+.tbar button{width:42px;border:0;background:transparent;color:var(--sec);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.tbar button:hover{background:color-mix(in srgb,var(--txt) 10%,transparent);color:var(--txt)}
+.tbar button.x:hover{background:#c4372d;color:#fff}
+.panel h1{font-size:17px}
+.panel .en{gap:9px}
+.panel .metric{padding:10px 12px}.panel .metric .n{display:none}.panel .metric .v{font-size:19px}
+.p3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.p3 .btn{padding:0 6px}
+.link{background:none;border:0;color:var(--sec);cursor:pointer;min-height:30px;text-decoration:underline;margin-top:auto;font-size:13px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="toast" role="status"></div>
+<script>
+'use strict';
+const Q=new URLSearchParams(location.search),TOKEN=Q.get('t')||'',PANEL=Q.get('v')==='panel',WV=window.chrome&&window.chrome.webview,HOST=Q.get('host')==='1'&&!!WV;
+const post=m=>{if(HOST)WV.postMessage(m)};
+if(HOST)document.documentElement.classList.add('host');
+const L={
+overview:['Обзор','Огляд','Overview'],profiles:['Профили','Профілі','Profiles'],schedule:['График','Графік','Schedule'],stats:['Статистика','Статистика','Statistics'],cleanup:['Уборка','Прибирання','Clean-up'],health:['Здоровье','Стан','Health'],settings:['Настройки','Налаштування','Settings'],
+m_blackout:['Без света, работа','Без світла, робота','No power, working'],m_lite:['Без света, игра','Без світла, гра','No power, gaming'],m_bfilm:['Без света, кино','Без світла, кіно','No power, film'],m_game:['Игра','Гра','Game'],m_film:['Кино','Кіно','Film'],m_build:['Сборка','Збірка','Build'],m_call:['Созвон','Дзвінок','Call'],m_quiet:['Тишина','Тиша','Quiet'],m_work:['Работа, экономно','Робота, ощадно','Work, saving'],m_none:['Обычный режим','Звичайний режим','Normal mode'],
+since:['Режим включён с','Режим увімкнено з','On since'],manual:['Выбран вручную','Обрано вручну','Chosen by hand'],auto_now:['Профиль выбирается сам','Профіль обирається сам','The profile is chosen automatically'],
+gpu_asleep:['Видеокарта спит','Відеокарта спить','Video card asleep'],gpu_awake:['Видеокарта не спит','Відеокарта не спить','Video card awake'],
+draw:['Расход','Споживання','Draw'],w:['Вт','Вт','W'],wh:['Вт·ч','Вт·год','Wh'],goal:['замер по батарее','вимір за батареєю','measured on battery'],last_meas:['по прошлому замеру','за минулим виміром','from the last measurement'],on_ac:['на зарядке','на зарядці','on the charger'],
+lasts:['Хватит на','Вистачить на','Lasts'],bat_bank:['батарея и павербанк','батарея і павербанк','battery and power bank'],bat_only:['от батареи','від батареї','on battery'],
+power_back:['Свет дадут','Світло дадуть','Power back'],next_off:['Отключение','Відключення','Next outage'],maybe:['Возможно отключение до','Можливе відключення до','Possible outage until'],no_off:['Отключений нет','Відключень немає','No outages'],by_sched:['по графику, ± 30 минут','за графіком, ± 30 хвилин','by the schedule, ± 30 min'],sched_none:['Графика нет','Графіка немає','No schedule'],sched_set:['укажи область и очередь в «Графике»','вкажи область і чергу в «Графіку»','set the region and group in Schedule'],sched_old:['график устарел','графік застарів','schedule is out of date'],
+battery:['Батарея','Батарея','Battery'],bank:['Павербанк','Павербанк','Power bank'],bank_full:['Заряжен','Заряджено','Full'],bank_full_t:['Павербанк заряжен на 100%','Павербанк заряджено на 100%','The power bank is at 100%'],bat_laptop:['Батарея ноутбука','Батарея ноутбука','Laptop battery'],chg:['заряжается','заряджається','charging'],bank_edit:['Изменить заряд павербанка','Змінити заряд павербанка','Change the power bank charge'],bank_unknown:['заряд не указан','заряд не вказано','charge not set'],last_run:['Последняя работа от батареи','Остання робота від батареї','Last run on battery'],avg:['в среднем','у середньому','average'],k_bank_mah:['Павербанк, мА·ч','Павербанк, мА·год','Power bank, mAh'],bank_mah_d:['Как написано на корпусе. Ноль, если павербанка нет.','Як написано на корпусі. Нуль, якщо павербанка немає.','As printed on the case. Zero for none.'],bank_usable:['полезных','корисних','usable'],bank_set:['Указать заряд павербанка','Вказати заряд павербанка','Set power bank charge'],bank_set_q:['Сколько процентов показывает павербанк?','Скільки відсотків показує павербанк?','What percent does the power bank show?'],bank_ok:['Учёл. С каждой правкой расход павербанка считается точнее.','Врахував. З кожною правкою витрата павербанка рахується точніше.','Got it. Each correction makes the power bank estimate more accurate.'],e_pct:['Нужно число от 0 до 100.','Потрібне число від 0 до 100.','Needs a number from 0 to 100.'],e_nobank:['Сначала укажи ёмкость павербанка в настройках.','Спершу вкажи ємність павербанка в налаштуваннях.','Set the power bank capacity in Settings first.'],bank_q:['Есть павербанк? Укажи его ёмкость в настройках, и я буду считать, насколько его хватит.','Маєш павербанк? Вкажи його ємність у налаштуваннях, і я рахуватиму, на скільки його вистачить.','Got a power bank? Set its capacity in Settings to see how long it lasts.'],
+today:['Сегодня по графику','Сьогодні за графіком','Today by the schedule'],profile:['Профиль','Профіль','Profile'],auto:['Авто','Авто','Auto'],p_work:['Работа','Робота','Work'],
+turn_on:['Включить режим «Без света»','Увімкнути режим «Без світла»','Turn on No-power mode'],turn_off:['Выключить режим «Без света»','Вимкнути режим «Без світла»','Turn off No-power mode'],
+tip_gpu:['будит видеокарту NVIDIA','будить відеокарту NVIDIA','keeps the NVIDIA card awake'],tip_gpu_d:['С ней ноутбук ест на 15–20 Вт больше.','З нею ноутбук їсть на 15–20 Вт більше.','With it the laptop draws 15–20 W more.'],fix_gpu:['Перевести на встроенную графику','Перевести на вбудовану графіку','Move to built-in graphics'],restart_app:['Готово. Перезапусти программу, чтобы она перешла на встроенную графику.','Готово. Перезапусти програму, щоб вона перейшла на вбудовану графіку.','Done. Restart the program to move it to the built-in graphics.'],
+tip_admin:['Нет прав администратора','Немає прав адміністратора','No administrator rights'],tip_admin_d:['Без них не работают пауза служб, профиль охлаждения и часть уборки.','Без них не працюють пауза служб, профіль охолодження та частина прибирання.','Without them pausing services, the cooling profile and part of the clean-up do not work.'],elevate:['Перезапустить с правами','Перезапустити з правами','Restart with rights'],
+tip_upd:['Вышла новая версия','Вийшла нова версія','A new version is out'],upd_go:['Обновить','Оновити','Update'],upd_busy:['Скачиваю…','Завантажую…','Downloading…'],upd_d:['Программа скачает её и перезапустится сама.','Програма завантажить її та перезапуститься сама.','The program downloads it and restarts by itself.'],upd_err:['Обновиться не получилось','Оновитися не вдалося','The update did not work'],k_update_check:['Проверять обновления','Перевіряти оновлення','Check for updates'],e_noupdate:['Новой версии пока нет.','Нової версії поки немає.','There is no new version yet.'],e_busy:['Уже делаю.','Вже роблю.','Already at it.'],e_needbattery:['Для замера ноутбук должен работать от батареи: отключи зарядку и павербанк.','Для виміру ноутбук має працювати від батареї: від’єднай зарядку і павербанк.','The laptop has to run on battery for this: unplug the charger and the power bank.'],e_needidle:['Сначала закрой игру или плеер.','Спершу закрий гру або плеєр.','Close the game or the player first.'],meas:['Сколько даёт экономия','Скільки дає економія','What the saving gives'],meas_d:['Три минуты без экономии и три с ней, от батареи. Работай как обычно, режим переключится сам.','Три хвилини без економії і три з нею, від батареї. Працюй як зазвичай, режим перемкнеться сам.','Three minutes without saving and three with it, on battery. Work as usual, the mode switches by itself.'],meas_go:['Замерить, 8 минут','Виміряти, 8 хвилин','Measure, 8 minutes'],meas_stop:['Остановить','Зупинити','Stop'],meas_off:['Меряю без экономии','Вимірюю без економії','Measuring without saving'],meas_on:['Меряю с экономией','Вимірюю з економією','Measuring with saving'],meas_left:['осталось','залишилося','left'],meas_base:['без экономии','без економії','without saving'],meas_save:['с экономией','з економією','with saving'],meas_gain:['Экономия','Економія','Saving'],meas_more:['на столько дольше хватит заряда','на стільки довше вистачить заряду','that much longer on one charge'],wz_title:['Первый запуск','Перший запуск','First run'],wz_sub:['Три вещи, и программа будет считать точно.','Три речі, і програма рахуватиме точно.','Three things, and the numbers will be right.'],wz_found:['Что умеет этот ноутбук','Що вміє цей ноутбук','What this laptop can do'],wz_bank:['Павербанк','Павербанк','Power bank'],wz_place:['График отключений','Графік відключень','Outage schedule'],wz_place_d:['Чтобы предупреждать заранее и понимать, когда дадут свет.','Щоб попереджати заздалегідь і розуміти, коли дадуть світло.','To warn ahead and to know when the power is back.'],wz_done:['Готово','Готово','Done'],reg_none:['не выбрана','не вибрано','not chosen'],reg_widget:['из «Коли Є»','з «Коли Є»','from Koly Ye'],grp_none:['не выбрана','не вибрано','not chosen'],
+setup:['Что нашлось на этом ноутбуке','Що знайшлося на цьому ноутбуці','What was found on this laptop'],setup_ok:['Понятно','Зрозуміло','Got it'],c_fan:['Профиль охлаждения','Профіль охолодження','Cooling profile'],c_limit:['Лимит зарядки батареи','Ліміт заряджання батареї','Battery charge limit'],c_nvidia:['Видеокарта NVIDIA рядом со встроенной','Відеокарта NVIDIA поруч із вбудованою','NVIDIA card next to built-in graphics'],c_hz:['Пониженная частота экрана','Знижена частота екрана','Lower screen refresh rate'],c_battery:['Батарея','Батарея','Battery'],yes:['есть','є','yes'],no:['нет, эти пункты скрыты','немає, ці пункти приховано','no, hidden'],looking:['Смотрю, что умеет этот ноутбук…','Дивлюся, що вміє цей ноутбук…','Checking what this laptop can do…'],
+e_blackout:['Без света профиль выбирается сам.','Без світла профіль обирається сам.','Without power the profile is chosen automatically.'],e_battery:['Этот профиль работает только на зарядке.','Цей профіль працює лише на зарядці.','This profile only works on the charger.'],e_admin:['Нужны права администратора.','Потрібні права адміністратора.','Administrator rights are needed.'],e_any:['Не получилось.','Не вдалося.','That did not work.'],
+all_profiles:['Все профили','Усі профілі','All profiles'],prof_sub:['Программа открылась — профиль включился. Нажми на профиль, чтобы настроить.','Програма відкрилася — профіль увімкнувся. Натисни на профіль, щоб налаштувати.','A program opens, its profile turns on. Click a profile to set it up.'],
+d_auto:['Сам выбирает профиль по правилам','Сам обирає профіль за правилами','Picks a profile by the rules'],d_blackout:['Когда пропала розетка: экономия на максимум','Коли зникла розетка: максимальна економія','When the charger is gone: maximum saving'],d_game:['На зарядке: турбо, производительность, приоритет игре','На зарядці: турбо, продуктивність, пріоритет грі','On the charger: turbo, performance, priority to the game'],d_lite:['Игра без света: экономия остаётся, игре приоритет','Гра без світла: економія лишається, грі пріоритет','A game without power: saving stays, the game gets priority'],d_film:['Пока открыт видеоплеер','Поки відкрито відеоплеєр','While a video player is open'],d_build:['Эмулятор, компиляция: полная мощность на зарядке','Емулятор, компіляція: повна потужність на зарядці','Emulator, compiling: full power on the charger'],d_call:['Тихий вентилятор, пока идёт звонок','Тихий вентилятор, поки триває дзвінок','A quiet fan during a call'],d_quiet:['Ночью: всё тихо и экономно','Уночі: тихо й ощадно','At night: quiet and saving'],
+p_blackout:['Без света','Без світла','No power'],p_lite:['Игра без света','Гра без світла','Game without power'],
+k_auto_enable:['Включать самому, когда пропала розетка','Вмикати самому, коли зникла розетка','Turn on when the charger is gone'],k_level:['Турбо-буст','Турбо-буст','Turbo boost'],lv_max:['Выключен','Вимкнено','Off'],lv_soft:['Оставить','Залишити','Keep'],k_set_brightness:['Понижать яркость','Знижувати яскравість','Dim the screen'],k_brightness:['Яркость, %','Яскравість, %','Brightness, %'],k_set_refresh:['Понижать частоту экрана','Знижувати частоту екрана','Lower the refresh rate'],k_refresh_hz:['Частота, Гц','Частота, Гц','Rate, Hz'],k_quiet_profile:['Тихий профиль охлаждения','Тихий профіль охолодження','Quiet cooling profile'],k_ecores:['Работа на энергоэффективных ядрах','Робота на енергоефективних ядрах','Prefer efficient cores'],k_bt_off:['Выключать Bluetooth','Вимикати Bluetooth','Turn Bluetooth off'],k_pause_services:['Ставить фоновые службы на паузу','Ставити фонові служби на паузу','Pause background services'],k_services:['Службы','Служби','Services'],k_pause_vpn:['Ставить VPN на паузу','Ставити VPN на паузу','Pause VPN'],k_vpn:['VPN-программы','VPN-програми','VPN programs'],k_gpu_watch:['Следить за видеокартой NVIDIA','Стежити за відеокартою NVIDIA','Watch the NVIDIA card'],k_kill:['Закрывать программы','Закривати програми','Close programs'],k_low_warn:['Предупреждать на 30% и 10%','Попереджати на 30% і 10%','Warn at 30% and 10%'],
+k_game_turbo:['Включать турбо-буст','Вмикати турбо-буст','Turn turbo boost on'],k_game_thermal:['Профиль «Производительность»','Профіль «Продуктивність»','Performance cooling profile'],k_game_priority:['Поднимать приоритет игры','Піднімати пріоритет гри','Raise the game priority'],k_game_throttle:['Придерживать фоновые программы','Притримувати фонові програми','Hold background programs back'],k_throttle:['Какие программы придерживать','Які програми притримувати','Programs to hold back'],k_games:['Игры, которые не определились сами','Ігри, які не визначилися самі','Games not found automatically'],k_not_games:['Не считать играми','Не вважати іграми','Not games'],
+k_lite_gpu:['Запускать игры на встроенной графике','Запускати ігри на вбудованій графіці','Start games on built-in graphics'],k_lite_turbo:['Оставлять немного турбо','Залишати трохи турбо','Keep a little turbo'],
+k_film_wifi_off:['Без света выключать Wi-Fi','Без світла вимикати Wi-Fi','Turn Wi-Fi off without power'],k_players:['Видеоплееры','Відеоплеєри','Video players'],
+k_build:['Программы сборки','Програми збірки','Build programs'],k_calls:['Программы для звонков','Програми для дзвінків','Call programs'],k_quiet_from:['С какого часа','З якої години','From hour'],k_quiet_to:['До какого часа','До якої години','Until hour'],list_hint:['Имена программ через запятую, без .exe','Назви програм через кому, без .exe','Program names, comma separated, without .exe'],
+sched_sub:['Данные «Коли Є»','Дані «Коли Є»','Koly Ye data'],region:['Область','Область','Region'],group:['Очередь','Черга','Group'],from_widget:['из виджета «Коли Є»','з віджета «Коли Є»','from the Koly Ye widget'],updated:['обновлено','оновлено','updated'],emergency:['Сейчас аварийные отключения, графику верить нельзя.','Зараз аварійні відключення, графіку вірити не можна.','Emergency outages now, the schedule cannot be trusted.'],days:['Ближайшие дни','Найближчі дні','Coming days'],no_days:['Графика пока нет. Укажи область и очередь ниже.','Графіка поки немає. Вкажи область і чергу нижче.','No schedule yet. Set the region and group below.'],l_off:['Отключат','Відключать','Outage'],l_maybe:['Возможно','Можливо','Possible'],before:['Перед отключением','Перед відключенням','Before an outage'],
+k_schedule:['Брать график «Коли Є»','Брати графік «Коли Є»','Use the Koly Ye schedule'],k_precharge:['Дозарядить батарею до 100% за 2 часа','Дозарядити батарею до 100% за 2 години','Charge to 100% two hours before'],k_warn_before:['Предупредить заранее','Попередити заздалегідь','Warn ahead'],k_warn_min:['За сколько минут','За скільки хвилин','Minutes ahead'],k_bank_warn:['Напомнить зарядить павербанк','Нагадати зарядити павербанк','Remind to charge the power bank'],k_auto_return:['Выключать режим, когда свет вернулся','Вимикати режим, коли світло повернулося','Turn the mode off when power is back'],refresh:['Обновить','Оновити','Refresh'],
+stats_sub:['Что и сколько ест без света','Що і скільки їсть без світла','What draws how much without power'],avg_draw:['Средний расход без света','Середнє споживання без світла','Average draw without power'],week_out:['Отключений за неделю','Відключень за тиждень','Outages this week'],longest:['Самое долгое','Найдовше','Longest'],total:['всего','усього','in total'],by_mode:['Расход по режимам','Споживання за режимами','Draw by mode'],history:['История отключений','Історія відключень','Outage history'],hogs:['Кто сейчас грузит процессор','Хто зараз вантажить процесор','Who loads the processor now'],no_data:['Пока нет данных. Они появятся после первого отключения.','Поки немає даних. Вони з’являться після першого відключення.','No data yet. It appears after the first outage.'],gpu_on:['видеокарта не спит','відеокарта не спить','video card awake'],from_bank:['от павербанка','від павербанка','from the power bank'],
+clean_sub:['Мелочь чищу сам, про крупное спрашиваю','Дрібне чищу сам, про велике питаю','Small things are cleaned automatically, big ones on request'],clean_now:['Очистить','Очистити','Clean'],auto_list:['Чищу сам','Чищу сам','Cleaned automatically'],big_list:['Крупное, только с твоего согласия','Велике, лише з твоєї згоди','Big things, only with your consent'],i_temp:['Временные файлы','Тимчасові файли','Temporary files'],i_temp_d:['Старше суток','Старші за добу','Older than a day'],i_browsers:['Кэш браузеров','Кеш браузерів','Browser caches'],i_browsers_d:['Brave, Chrome, Edge, Firefox','Brave, Chrome, Edge, Firefox','Brave, Chrome, Edge, Firefox'],i_running:['открытые браузеры пропускаю','відкриті браузери пропускаю','open browsers are skipped'],i_wu:['Кэш обновлений Windows','Кеш оновлень Windows','Windows update cache'],i_wu_d:['Обновления старше недели','Оновлення, старші за тиждень','Updates older than a week'],i_bin:['Корзина','Кошик','Recycle bin'],i_bin_d:['Файлы старше, дней:','Файли, старші за, днів:','Files older than, days:'],i_hiber:['Файл гибернации','Файл гібернації','Hibernation file'],i_hiber_d:['Нужен только для режима гибернации. Если им не пользуешься, можно убрать.','Потрібен лише для гібернації. Якщо нею не користуєшся, можна прибрати.','Only needed for hibernation. Safe to remove if you never use it.'],i_down:['Загрузки','Завантаження','Downloads'],i_down_d:['Тут решаешь только ты','Тут вирішуєш лише ти','Only you decide here'],remove:['Убрать','Прибрати','Remove'],open:['Открыть','Відкрити','Open'],hiber_q:['Убрать файл гибернации? Режим гибернации перестанет работать, сон останется.','Прибрати файл гібернації? Гібернація перестане працювати, сон залишиться.','Remove the hibernation file? Hibernation will stop working, sleep stays.'],sched_clean:['Расписание','Розклад','Schedule'],k_clean_auto:['Раз в неделю','Раз на тиждень','Once a week'],k_clean_auto_d:['Только на зарядке и когда ноутбук простаивает','Лише на зарядці та коли ноутбук простоює','Only on the charger and when the laptop is idle'],last_clean:['Последняя уборка','Останнє прибирання','Last clean-up'],never:['ещё не было','ще не було','not yet'],freed:['освобождено','звільнено','freed'],counting:['Считаю…','Рахую…','Counting…'],need_admin:['нужны права администратора','потрібні права адміністратора','administrator rights needed'],
+health_sub:['Состояние ноутбука без лишних цифр','Стан ноутбука без зайвих цифр','The laptop at a glance'],wear:['от заводской ёмкости','від заводської ємності','of the design capacity'],cycles:['циклов','циклів','cycles'],cpu:['Температура','Температура','Temperature'],now:['сейчас','зараз','now'],disks:['Диски','Диски','Disks'],healthy:['Здоровы','Здорові','Healthy'],attention:['Нужно внимание','Потрібна увага','Needs attention'],free:['свободно','вільно','free'],system:['Система','Система','System'],autorun:['Автозагрузка','Автозавантаження','Autostart'],programs:['программ','програм','programs'],k_autorun_watch:['Предупреждать о новом в автозагрузке','Попереджати про нове в автозавантаженні','Warn about new autostart entries'],uptime:['Без перезагрузки','Без перезавантаження','Since the last restart'],uptime_d:['Раз в неделю полезно перезагрузиться','Раз на тиждень корисно перезавантажитися','A restart once a week helps'],d_short:['д','д','d'],h_short:['ч','год','h'],min_short:['мин','хв','min'],care:['Бережём батарею','Бережемо батарею','Battery care'],limit:['Лимит зарядки','Ліміт заряджання','Charge limit'],limit_d:['Держит батарею на 80%, снимается перед отключением','Тримає батарею на 80%, знімається перед відключенням','Keeps the battery at 80%, lifted before an outage'],unknown:['не удалось узнать','не вдалося дізнатися','unknown'],
+k_region:['Область','Область','Region'],k_group:['Очередь','Черга','Group'],k_clean_bin_days:['Корзина: удалять файлы старше, дней','Кошик: видаляти файли, старші за, днів','Recycle bin: remove files older than, days'],program:['Программа','Програма','Program'],no_power:['Без света','Без світла','Without power'],k_lang:['Язык','Мова','Language'],k_theme:['Тема','Тема','Theme'],dark:['Тёмная','Темна','Dark'],light:['Светлая','Світла','Light'],k_click:['Левый клик по значку','Лівий клік по значку','Left click on the icon'],cl_panel:['Мини-панель','Міні-панель','Small panel'],cl_toggle:['Включить или выключить режим','Увімкнути або вимкнути режим','Toggle the mode'],autostart:['Запускать вместе с Windows','Запускати разом із Windows','Start with Windows'],k_hotkey:['Включать режим клавишами Ctrl+Alt+B','Вмикати режим клавішами Ctrl+Alt+B','Toggle with Ctrl+Alt+B'],k_update_repo:['Обновления','Оновлення','Updates'],k_update_repo_d:['Владелец/репозиторий на GitHub','Власник/репозиторій на GitHub','Owner/repository on GitHub'],k_widget:['Виджет заряда','Віджет заряду','Battery widget'],w_off:['Не показывать','Не показувати','Hidden'],w_auto:['Без света','Без світла','Without power'],w_on:['Всегда','Завжди','Always'],k_widget_corner:['Угол экрана','Кут екрана','Screen corner'],tl:['Слева сверху','Зліва зверху','Top left'],tr:['Справа сверху','Справа зверху','Top right'],bl:['Слева снизу','Зліва знизу','Bottom left'],br:['Справа снизу','Справа знизу','Bottom right'],k_widget_opacity:['Непрозрачность виджета, %','Непрозорість віджета, %','Widget opacity, %'],k_powerbank_wh:['Павербанк, Вт·ч','Павербанк, Вт·год','Power bank, Wh'],k_powerbank_wh_d:['Полезная ёмкость: мА·ч × 3,7 × 0,85 ÷ 1000. Ноль, если павербанка нет','Корисна ємність: мА·год × 3,7 × 0,85 ÷ 1000. Нуль, якщо павербанка немає','Usable capacity: mAh × 3.7 × 0.85 ÷ 1000. Zero for none'],tg:['Сообщения в Telegram','Повідомлення в Telegram','Telegram messages'],k_tg_token:['Токен бота','Токен бота','Bot token'],k_tg_chat:['Номер чата','Номер чату','Chat id'],tg_d:['Свет пропал, свет вернулся, мало заряда','Світло зникло, світло повернулося, мало заряду','Power lost, power back, low battery'],journal:['Журнал','Журнал','Log'],tips:['Советы','Поради','Tips'],folder:['Папка с данными','Тека з даними','Data folder'],cfg_file:['Файл настроек','Файл налаштувань','Settings file'],open_app:['Открыть BlackoutMode','Відкрити BlackoutMode','Open BlackoutMode'],k_charge_warn:['Предупреждать, если павербанк заряжает батарею','Попереджати, якщо павербанк заряджає батарею','Warn when the power bank charges the battery']
+};
+let LANG='ru',S=null,CFG={},DATA={},page=location.hash.slice(1)||'overview',selProf='blackout',THEME=localStorage.getItem('theme')||'dark';
+const t=k=>{const v=L[k];return v?v[{ru:0,uk:1,en:2}[LANG]]:k};
+const IC={overview:'M3 11l9-8 9 8M5 10v10h14V10',profiles:'M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M14 4v4M8 10v4M16 16v4',schedule:'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4',stats:'M4 20V10M10 20V4M16 20v-7M22 20H2',cleanup:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',health:'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z',settings:'M12 8a4 4 0 1 0 0 8a4 4 0 0 0 0-8zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2',bolt:'M13 2L5 14h6l-1 8 8-12h-6z'};
+const icon=(n,s=18)=>`<svg aria-hidden="true" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${IC[n]}"></path></svg>`;
+function h(tag,attrs,...kids){const e=document.createElement(tag);for(const k in attrs||{}){const v=attrs[k];if(v==null||v===false)continue;if(k==='html')e.innerHTML=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(k==='class')e.className=v;else e.setAttribute(k,v===true?'':v)}for(const c of kids.flat(Infinity)){if(c==null||c===false)continue;e.append(c.nodeType?c:document.createTextNode(c))}return e}
+async function api(path,body){const r=await fetch('/api/'+path,{method:body?'POST':'GET',headers:{'X-Token':TOKEN,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});return r.json()}
+const get=n=>api('get/'+n);
+async function act(name,arg){let r;try{r=await api('do/'+name,arg||{})}catch(e){r={error:'any'}}if(r&&r.error){toast(L['e_'+r.error]?t('e_'+r.error):t('e_any'))}await loadState();return r}
+let toastT;function toast(msg){const e=document.getElementById('toast');e.textContent=msg;e.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>e.style.display='none',4000)}
+const num=(v,d=0)=>Number(v).toLocaleString(LANG==='en'?'en':'ru',{maximumFractionDigits:d,minimumFractionDigits:d});
+function dur(hours){if(!(hours>=0))return'—';const m=Math.round(hours*60);if(m<60)return m+' '+t('min_short');return Math.floor(m/60)+' '+t('h_short')+(m%60?' '+m%60+' '+t('min_short'):'')}
+function bytes(b){if(b==null)return'—';const g=b/2**30;if(g>=1)return num(g,1)+(LANG==='en'?' GB':' ГБ');return num(b/2**20,0)+(LANG==='en'?' MB':' МБ')}
+function modeTitle(s){if(s.mode==='blackout')return t(s.kind==='lite'?'m_lite':s.kind==='film'?'m_bfilm':'m_blackout');return t('m_'+(s.mode||'none'))}
+const on=k=>CFG[k]==='1';
+async function setKey(key,value){await act('set',{key,value:String(value)});CFG=await get('config');if(key==='lang'){LANG=value;document.documentElement.lang=LANG}render()}
+function sw(checked,label,fn){return h('button',{class:'sw',role:'switch','aria-checked':checked?'true':'false','aria-label':label,onclick:fn},h('span'))}
+function row(title,desc,right,extra){return h('div',Object.assign({class:'row'},extra||{}),h('div',{style:'min-width:0'},h('div',{class:'t'},title),desc&&h('div',{class:'d'},desc)),h('div',{class:'r'},right))}
+function kBool(key,desc){return row(t('k_'+key),desc,sw(on(key),t('k_'+key),()=>setKey(key,on(key)?0:1)))}
+function kInput(key,type,desc,ph){const i=h('input',{type,value:CFG[key]??'',placeholder:ph||null,'aria-label':t('k_'+key)});i.addEventListener('change',()=>setKey(key,i.value.trim()));return row(t('k_'+key),desc,i)}
+function kSel(key,opts,desc,cur,fn){const s=h('select',{'aria-label':t('k_'+key)},opts.map(([v,l])=>h('option',{value:v,selected:(cur??CFG[key])===v},l)));s.addEventListener('change',()=>fn?fn(s.value):setKey(key,s.value));return row(t('k_'+key),desc,s)}
+const section=(title,...kids)=>h('section',null,title&&h('div',{class:'lab'},title),kids);
+const metric=(l,v,n)=>h('div',{class:'metric'},h('div',{class:'l'},l),h('div',{class:'v'},v),n&&h('div',{class:'n'},n));
+const btn=(label,fn,cls)=>h('button',{class:'btn '+(cls||''),onclick:fn},label);
+const todayKey=()=>{const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')};
+function dayBar(d,name){const n=new Date(),now=d.date===todayKey()?(n.getHours()*60+n.getMinutes())/14.4:-1;return h('div',{class:'day'},name!=null&&h('b',null,name),h('div',null,d.segs.map(([w,st])=>h('i',{class:st,style:`width:${w}%`})),now>=0&&h('u',{style:`left:${now.toFixed(2)}%`,title:t('now')})))}
+const hours=()=>h('div',{class:'hours'},['00','06','12','18','24'].map(x=>h('span',null,x)));
+function todayLine(){const d=(DATA.schedule&&DATA.schedule.days)||[];const now=new Date(),k=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');return d.find(x=>x.date===k)}
+function schedMetric(s){const c=s.sched;if(!c.known)return metric(t('schedule'),t('sched_none'),t('sched_set'));const note=c.usable?t('by_sched'):t('sched_old');if(c.state==='off')return metric(t('power_back'),c.changeAt?'≈ '+c.changeAt:'—',note);if(c.state==='maybe')return metric(t('maybe'),c.changeAt?'≈ '+c.changeAt:'—',note);if(c.nextOff)return metric(t('next_off'),'≈ '+c.nextOff,note);return metric(t('next_off'),t('no_off'),note)}
+function wattsMetric(s){if(!s.battery)return metric(t('draw'),'—','');if(s.onAC&&s.mode!=='blackout')return metric(t('draw'),'—',t('on_ac'));return metric(t('draw'),s.watts>0?num(s.watts)+' '+t('w'):'—',s.measured?t('goal'):t('last_meas'))}
+function lastsMetric(s){return metric(t('lasts'),s.hours>=0&&(!s.onAC||s.mode==='blackout')?'≈ '+dur(s.hours):'—',s.bankCap>0&&(s.mode==='blackout'||s.bankKnown)?t('bat_bank'):t('bat_only'))}
+function profButtons(s){const cur=s.manual?Object.keys(PK).find(k=>PK[k]===s.mode)||'auto':'auto';return ['auto','work','game','film','build','quiet'].map(p=>btn(p==='auto'?t('auto'):p==='work'?t('p_work'):t('m_'+p),()=>act('profile',{name:p}),cur===p?'pri':''))}
+const PK={work:'work',game:'game',film:'film',build:'build',quiet:'quiet'};
+const PEN='<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"></path></svg>';
+function batBlock(s){if(!s.battery)return null;
+const bat=h('div',null,h('div',{class:'top'},h('b',null,t(s.bankCap>0?'bat_laptop':'battery')),h('span',{class:'val'},s.rateW>0&&h('span',null,t('chg')+' +'+num(s.rateW)+' '+t('w')+' ·'),h('span',null,num(s.batWh||0)+' '+t('wh')+' ·'),h('b',null,s.pct+'%'))),h('div',{class:'bar'+(s.pct<=20?' low':'')},h('i',{style:`width:${s.pct}%`})));
+if(!(s.bankCap>0))return h('div',{class:'en'},bat);
+const known=s.bankKnown||s.mode==='blackout',bp=Math.max(0,Math.min(100,s.bankWh/s.bankCap*100));
+const bank=h('div',null,h('div',{class:'top'},h('b',null,t('bank')),h('span',{class:'val'},h('span',null,known?'≈ '+num(s.bankWh)+' '+t('wh')+' ·':t('bank_unknown')+' ·'),h('button',{class:'chip',id:'bankbtn',title:t('bank_edit'),'aria-label':t('bank_edit'),onclick:e=>bankAsk(e.currentTarget),html:'<span>'+(known?'≈ '+num(bp)+'%':'— %')+'</span>'+PEN}),h('button',{class:'tiny',title:t('bank_full_t'),onclick:()=>act('bankfull')},t('bank_full')))),h('div',{class:'bar bank'+(known&&bp<=15?' low':'')},h('i',{style:`width:${known?bp:0}%`})));
+return h('div',{class:'en'},bat,bank)}
+function bankAsk(b){const i=h('input',{type:'number',min:0,max:100,step:1,placeholder:'%','aria-label':t('bank_set_q'),title:t('bank_set_q')});let done=false;const go=async()=>{if(done)return;done=true;const v=i.value.trim();i.blur();if(v===''){render();return}const r=await act('bankpct',{pct:v});if(r&&!r.error)toast(t('bank_ok'))};i.addEventListener('keydown',e=>{if(e.key==='Enter')go();if(e.key==='Escape'){i.value='';go()}});i.addEventListener('blur',go);b.replaceWith(i);i.focus()}
+const REGIONS=[['kyiv-city','г. Киев','м. Київ','Kyiv city'],['vinnytsia','Винницкая','Вінницька','Vinnytsia'],['volyn','Волынская','Волинська','Volyn'],['dnipropetrovsk','Днепропетровская','Дніпропетровська','Dnipropetrovsk'],['donetsk','Донецкая','Донецька','Donetsk'],['zhytomyr','Житомирская','Житомирська','Zhytomyr'],['zakarpattia','Закарпатская','Закарпатська','Zakarpattia'],['zaporizhzhia','Запорожская','Запорізька','Zaporizhzhia'],['ivano-frankivsk','Ивано-Франковская','Івано-Франківська','Ivano-Frankivsk'],['kyiv','Киевская','Київська','Kyiv region'],['kirovohrad','Кировоградская','Кіровоградська','Kirovohrad'],['lviv','Львовская','Львівська','Lviv'],['mykolaiv','Николаевская','Миколаївська','Mykolaiv'],['odesa','Одесская','Одеська','Odesa'],['poltava','Полтавская','Полтавська','Poltava'],['rivne','Ровенская','Рівненська','Rivne'],['sumy','Сумская','Сумська','Sumy'],['ternopil','Тернопольская','Тернопільська','Ternopil'],['kharkiv','Харьковская','Харківська','Kharkiv'],['kherson','Херсонская','Херсонська','Kherson'],['khmelnytskyi','Хмельницкая','Хмельницька','Khmelnytskyi'],['cherkasy','Черкасская','Черкаська','Cherkasy'],['chernivtsi','Черновицкая','Чернівецька','Chernivtsi'],['chernihiv','Черниговская','Чернігівська','Chernihiv']];
+const regName=id=>{const r=REGIONS.find(x=>x[0]===id);return r?r[{ru:1,uk:2,en:3}[LANG]||1]:id};
+const GROUPS=['1.1','1.2','2.1','2.2','3.1','3.2','4.1','4.2','5.1','5.2','6.1','6.2'];
+function placeRows(s){const cur=CFG.region||'',fromW=!cur&&s.sched.region;
+const rs=REGIONS.map(r=>[r[0],regName(r[0])]).sort((a,b)=>a[1].localeCompare(b[1],LANG));
+if(cur&&!REGIONS.some(r=>r[0]===cur))rs.unshift([cur,cur]);
+rs.unshift(['',fromW?t('reg_widget')+': '+regName(s.sched.region):t('reg_none')]);
+let gs=((DATA.schedule&&DATA.schedule.groups)||[]).slice();if(!gs.length)gs=GROUPS.slice();const g=CFG.group||'';if(g&&!gs.includes(g))gs.unshift(g);
+const go=[['',!g&&s.sched.group?t('reg_widget')+': '+s.sched.group:t('grp_none')],...gs.map(x=>[x,x])];
+return[kSel('region',rs,null,cur,async v=>{await setKey('region',v);setTimeout(loadPage,2500)}),kSel('group',go,null,g)]}
+const MAH=[[10000,31],[20000,63],[30000,94],[48000,150],[60000,189]];
+function bankCapRow(){const wh=+CFG.powerbank_wh||0,std=MAH.find(x=>x[1]===wh),mah=std?std[0]:Math.round(wh/0.003145/100)*100;
+const i=h('input',{type:'number',min:0,step:1000,value:mah||0,'aria-label':t('k_bank_mah'),style:'width:92px'});
+i.addEventListener('change',()=>{const m=Math.max(0,+i.value||0),st=MAH.find(x=>x[0]===m);setKey('powerbank_wh',st?st[1]:Math.round(m*0.003145))});
+return row(t('k_bank_mah'),t('bank_mah_d')+(wh?' ≈ '+wh+' '+t('wh')+' '+t('bank_usable')+'.':''),i)}
+function pageOverview(s){
+const sub=s.mode==='blackout'&&s.since?t('since')+' '+s.since:s.manual?t('manual'):s.exe||t('auto_now');
+const out=[h('div',{class:'head'},h('div',null,h('h1',null,modeTitle(s)),h('p',{class:'sub'},sub)),s.caps.nvidia&&s.mode==='blackout'&&s.gpu&&h('span',{class:'pill'+(s.gpu==='awake'?' warn':'')},t(s.gpu==='awake'?'gpu_awake':'gpu_asleep')))];
+if(!s.setupDone){const c=s.caps;out.push(h('div',{class:'wz'},h('div',null,h('b',null,t('wz_title')),h('div',{class:'d'},t('wz_sub'))),
+h('div',{class:'g2'},section(t('wz_found')+(c.ready&&c.model?': '+c.vendor+' '+c.model:''),c.ready?['battery','fan','limit','nvidia','hz'].map(k=>h('div',{class:'cap'+(c[k]?' y':'')},h('i'),t('c_'+k),!c[k]&&!s.elevated&&(k==='fan'||k==='limit')?h('span',null,t('need_admin')):null)):h('div',{class:'mut'},t('looking'))),
+h('div',null,s.battery&&section(t('wz_bank'),bankCapRow()),section(t('wz_place'),h('div',{class:'mut',style:'margin-bottom:2px'},t('wz_place_d')),placeRows(s)))),
+h('div',{class:'btns'},btn(t('wz_done'),()=>act('setupdone').then(render),'pri'))))}
+out.push(h('div',{class:'g3'},wattsMetric(s),lastsMetric(s),schedMetric(s)));
+out.push(batBlock(s));
+const tl=todayLine();if(tl)out.push(section(t('today'),dayBar(tl),hours()));
+out.push(section(t('profile'),h('div',{class:'btns'},profButtons(s))));
+out.push(h('div',{class:'btns'},btn(t(s.mode==='blackout'?'turn_off':'turn_on'),()=>act('toggle'),s.mode==='blackout'?'':'pri')));
+if(s.gpu==='awake'&&s.gpuUsers&&s.gpuUsers.length)out.push(h('div',{class:'note'},h('div',null,h('div',null,s.gpuUsers.join(', ')+' '+t('tip_gpu')),h('div',{class:'d'},t('tip_gpu_d'))),btn(t('fix_gpu'),async()=>{const r=await act('gpufix');if(r&&r.done)toast(t('restart_app'))})));
+if(!s.elevated)out.push(h('div',{class:'note'},h('div',null,h('div',null,t('tip_admin')),h('div',{class:'d'},t('tip_admin_d'))),btn(t('elevate'),()=>act('elevate'))));
+if(s.update)out.push(h('div',{class:'note'},h('div',null,h('div',null,t('tip_upd')+': '+s.update.replace(/^v/,'')),h('div',{class:'d'},s.updateErr?t('upd_err')+': '+s.updateErr:t('upd_d'))),s.updateFile&&btn(s.updating?t('upd_busy'):t('upd_go'),()=>{if(!s.updating)act('update')},'pri')));
+if(s.battery&&!s.bankCap)out.push(h('div',{class:'mut'},t('bank_q')));
+return out}
+const PROFILES=[['auto',null],['blackout','auto_enable'],['lite','lite_game'],['game','game_mode'],['film','film_mode'],['build','build_mode'],['call','call_mode'],['quiet','quiet_auto']];
+function profDetail(p,s){const c=s.caps,lst=k=>kInput(k,'text',t('list_hint'));
+switch(p){
+case'blackout':return[kSel('level',[['max',t('lv_max')],['soft',t('lv_soft')]]),kBool('set_brightness'),on('set_brightness')&&kInput('brightness','number'),c.hz&&kBool('set_refresh'),c.fan&&kBool('quiet_profile'),kBool('ecores'),kBool('bt_off'),kBool('pause_services'),on('pause_services')&&lst('services'),kBool('pause_vpn'),on('pause_vpn')&&lst('vpn'),c.nvidia&&kBool('gpu_watch'),lst('kill'),kBool('low_warn'),kBool('charge_warn')];
+case'game':return[kBool('game_turbo'),c.fan&&kBool('game_thermal'),kBool('game_priority'),kBool('game_throttle'),lst('throttle'),lst('games'),lst('not_games')];
+case'lite':return[c.nvidia&&kBool('lite_gpu'),kBool('lite_turbo'),kBool('game_priority'),kBool('game_throttle')];
+case'film':return[kBool('film_wifi_off'),lst('players'),kBool('game_throttle')];
+case'build':return[lst('build'),c.fan&&kBool('game_thermal')];
+case'call':return[lst('calls')];
+case'quiet':return[kInput('quiet_from','number'),kInput('quiet_to','number')];
+default:return[h('div',{class:'mut',style:'padding:14px 0'},t('d_auto'))]}}
+function pageProfiles(s){
+const name=p=>p==='auto'?t('auto'):p==='blackout'?t('p_blackout'):p==='lite'?t('p_lite'):t('m_'+p);
+const left=PROFILES.map(([p,key])=>row(name(p),t('d_'+p),key?sw(on(key),name(p),e=>{e.stopPropagation();setKey(key,on(key)?0:1)}):null,{class:'row pick'+(selProf===p?' sel':''),onclick:()=>{selProf=p;render()}}));
+return[h('div',null,h('h1',null,t('profiles')),h('p',{class:'sub'},t('prof_sub'))),h('div',{class:'g2'},section(t('all_profiles'),left),section(name(selProf),h('div',{class:'box'},profDetail(selProf,s))))]}
+function pageSchedule(s){const d=DATA.schedule||{days:[]},c=s.sched;
+const wd=x=>new Date(x+'T12:00:00').toLocaleDateString(LANG==='en'?'en':LANG,{weekday:'short',day:'numeric'});
+const sub=[c.region?(c.region+(c.group?', '+t('group').toLowerCase()+' '+c.group:'')):null,d.fetchedAt?t('updated')+' '+new Date(d.fetchedAt).toLocaleTimeString(LANG==='en'?'en':'ru',{hour:'2-digit',minute:'2-digit'}):null].filter(Boolean).join('. ');
+return[h('div',{class:'head'},h('div',null,h('h1',null,t('schedule')),h('p',{class:'sub'},t('sched_sub')+(sub?'. '+sub:''))),btn(t('refresh'),()=>act('schedrefresh').then(()=>setTimeout(loadPage,2500)))),
+d.emergency&&h('div',{class:'note'},t('emergency')),
+section(t('days'),d.days.length?[d.days.map(x=>dayBar(x,wd(x.date))),h('div',{style:'padding-left:56px'},hours()),h('div',{class:'legend'},h('span',null,h('i',{style:'background:var(--acc)'}),t('l_off')),h('span',null,h('i',{style:'background:var(--maybe)'}),t('l_maybe')))]:h('div',{class:'mut'},t('no_days'))),
+h('div',{class:'g2'},section(t('before'),kBool('precharge'),kBool('warn_before'),on('warn_before')&&kInput('warn_min','number'),s.bankCap>0&&kBool('bank_warn'),kBool('auto_return'),kBool('auto_enable')),section(t('schedule'),kBool('schedule'),placeRows(s)))]}
+function runChart(pts,day){if(!pts||pts.length<5)return null;const W=600,H=120,ws=pts.map(p=>p.w),mx=Math.max(...ws),mn=Math.min(...ws),top=Math.ceil(mx*1.1),avg=ws.reduce((a,b)=>a+b,0)/ws.length;
+const x=i=>(i/(pts.length-1)*W).toFixed(1),y=v=>(H-v/top*H).toFixed(1);const line=pts.map((p,i)=>(i?'L':'M')+x(i)+' '+y(p.w)).join(' ');
+const d=new Date(day+'T12:00:00').toLocaleDateString(LANG==='en'?'en':LANG,{day:'numeric',month:'long'});
+return section(t('last_run'),h('div',{class:'chart'},h('div',{class:'cap'},h('span',null,d+', '+pts[0].t+'–'+pts[pts.length-1].t+' · '+pts[0].p+'% → '+pts[pts.length-1].p+'%'),h('span',null,t('avg')+' ',h('b',null,num(avg,1)+' '+t('w')),' · '+num(mn)+'–'+num(mx)+' '+t('w'))),
+h('div',{html:`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${t('draw')}"><path d="${line} L${W} ${H} L0 ${H} Z" fill="var(--acc)" opacity=".13"></path><path d="M0 ${y(avg)} H${W}" stroke="var(--mut)" stroke-width="1" stroke-dasharray="3 5" vector-effect="non-scaling-stroke" fill="none"></path><path d="${line}" fill="none" stroke="var(--acc)" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path></svg>`}),
+h('div',{class:'ax'},h('span',null,pts[0].t),h('span',null,pts[Math.floor(pts.length/2)].t),h('span',null,pts[pts.length-1].t))))}
+function measBlock(s){const m=s.measure||{};const mm=x=>Math.floor(x/60)+':'+String(x%60).padStart(2,'0');
+if(m.running)return section(t('meas'),h('div',{class:'note'},h('div',null,h('div',null,t(m.phase<=2?'meas_off':'meas_on')+' · '+t('meas_left')+' '+mm(m.left)),h('div',{class:'bar bank',style:'margin-top:9px;width:260px;max-width:60vw'},h('i',{style:`width:${Math.round(100-m.left/480*100)}%`}))),btn(t('meas_stop'),()=>act('measurestop'))));
+const has=m.baseW>1&&m.saveW>1,gain=has?(1-m.saveW/m.baseW)*100:0,more=has?(m.baseW/m.saveW-1)*100:0;
+return section(t('meas'),h('div',{class:'note'},h('div',null,has?h('div',{class:'gain'},h('b',null,(gain>=0?'−':'+')+num(Math.abs(gain))+'%'),h('span',null,num(m.baseW,1)+' '+t('w')+' '+t('meas_base')+' → '+num(m.saveW,1)+' '+t('w')+' '+t('meas_save'))):h('div',null,t('meas_d')),has&&h('div',{class:'d'},(more>0?'+'+num(more)+'% · '+t('meas_more')+' · ':'')+new Date(m.at).toLocaleDateString(LANG==='en'?'en':LANG,{day:'numeric',month:'long'}))),btn(t('meas_go'),()=>act('measure'))))}
+function pageStats(){const d=DATA.stats;if(!d)return[h('h1',null,t('stats'))];const st=d.stats,max=Math.max(1,...(st.draws||[]).map(x=>x.watts));
+const mname=x=>{const m=x.mode.split('+');let n=m[0]==='blackout'?t(m[1]==='lite'?'m_lite':m[1]==='film'?'m_bfilm':'m_blackout'):m[0]==='normal'?t('m_none'):t('m_'+m[0]);return n+(x.gpu==='awake'?', '+t('gpu_on'):'')};
+const dt=x=>{const a=new Date(x.start.replace(' ','T')),b=x.end.slice(11);return a.toLocaleDateString(LANG==='en'?'en':LANG,{day:'numeric',month:'long'})+', '+x.start.slice(11)+'–'+b};
+return[h('div',null,h('h1',null,t('stats')),h('p',{class:'sub'},t('stats_sub'))),
+h('div',{class:'g3'},metric(t('avg_draw'),st.avgW?'≈ '+num(st.avgW)+' '+t('w'):'—'),metric(t('week_out'),String(st.weekCount),st.weekMins?dur(st.weekMins/60)+' '+t('total'):''),metric(t('longest'),st.longest?dur(st.longest/60):'—',st.longestAt?new Date(st.longestAt.replace(' ','T')).toLocaleDateString(LANG==='en'?'en':LANG,{day:'numeric',month:'long'}):'')),
+runChart(st.last,st.lastDay),measBlock(S),
+section(t('by_mode'),(st.draws||[]).length?st.draws.map(x=>h('div',{class:'hb'},h('b',null,mname(x)),h('div',null,h('i',{style:`width:${Math.round(x.watts/max*100)}%`})),h('span',null,num(x.watts)+' '+t('w')))):h('div',{class:'mut'},t('no_data'))),
+h('div',{class:'g2'},section(t('history'),(st.outages||[]).length?st.outages.slice(0,8).map(x=>row(dt(x),dur(x.mins/60)+(x.bankWh>0?', '+t('from_bank'):''),x.pctA+'% → '+x.pctB+'%')):h('div',{class:'mut'},t('no_data'))),section(t('hogs'),(d.hogs||[]).slice(0,6).map(x=>row(x.Exe||x.Name,null,num(x.CPU,1)+'%'))))]}
+function pageCleanup(s){const d=DATA.cleanup||{items:[]},items=d.items||[],sel=(CFG.clean_items||'').split(',').map(x=>x.trim()).filter(Boolean);
+const tog=id=>setKey('clean_items',(sel.includes(id)?sel.filter(x=>x!==id):sel.concat(id)).join(', '));
+const total=items.filter(i=>sel.includes(i.id)&&i.note!=='admin').reduce((a,i)=>a+i.bytes,0);
+const desc=i=>{let x=t('i_'+i.id+'_d');if(i.id==='bin')x+=' '+d.binDays;if(i.note==='running')x+='. '+t('i_running');if(i.note==='admin')x+='. '+t('need_admin');return x};
+const last=d.last?new Date(d.last).toLocaleDateString(LANG==='en'?'en':LANG,{day:'numeric',month:'long'})+', '+t('freed')+' '+bytes(d.freed):t('never');
+return[h('div',{class:'head'},h('div',null,h('h1',null,t('cleanup')),h('p',{class:'sub'},t('clean_sub'))),btn(d.busy?t('counting'):t('clean_now')+' '+bytes(total),()=>{if(!d.busy)act('clean',{ids:sel.join(',')}).then(()=>setTimeout(loadPage,800))},'pri')),
+h('div',{class:'g2'},section(t('auto_list'),items.map(i=>row(t('i_'+i.id),desc(i),[h('span',null,d.busy?'…':bytes(i.bytes)),h('input',{type:'checkbox','aria-label':t('i_'+i.id),checked:sel.includes(i.id),onchange:()=>tog(i.id)})])),kInput('clean_bin_days','number')),
+section(t('big_list'),d.hiber>0&&row(t('i_hiber'),t('i_hiber_d'),[h('span',null,bytes(d.hiber)),btn(t('remove'),()=>{if(confirm(t('hiber_q')))act('hiberoff').then(()=>setTimeout(loadPage,3000))},'sm')]),row(t('i_down'),t('i_down_d'),[h('span',null,d.busy?'…':bytes(d.downloads)),btn(t('open'),()=>act('open',{what:'downloads'}),'sm')]))),
+section(t('sched_clean'),row(t('k_clean_auto'),t('k_clean_auto_d'),sw(on('clean_auto'),t('k_clean_auto'),()=>setKey('clean_auto',on('clean_auto')?0:1))),row(t('last_clean'),last,null))]}
+function pageHealth(s){const d=DATA.health||{};const wear=d.design>0&&d.full>0?Math.min(100,Math.round(d.full/d.design*100)):null;const bad=(d.disks||[]).filter(x=>x.health&&x.health!=='Healthy');
+const fr=(d.drives||[]).map(x=>x.root.slice(0,2)+' '+t('free')+' '+Math.round(x.free/x.total*100)+'%').join(', ');
+const up=d.upHours>=48?num(d.upHours/24,1)+' '+t('d_short'):d.upHours!=null?dur(d.upHours):'—';
+return[h('div',null,h('h1',null,t('health')),h('p',{class:'sub'},t('health_sub'))),
+h('div',{class:'g3'},s.battery&&metric(t('battery'),wear!=null?wear+'%':'—',wear!=null?t('wear')+(d.cycles?', '+d.cycles+' '+t('cycles'):''):d.busy?t('counting'):t('unknown')),metric(t('cpu'),d.tempC>0?Math.round(d.tempC)+' °C':'—',d.tempC>0?t('now'):d.busy?t('counting'):t('unknown')),metric(t('disks'),(d.disks||[]).length?t(bad.length?'attention':'healthy'):'—',bad.length?bad.map(x=>x.name).join(', '):fr)),
+h('div',{class:'g2'},section(t('system'),row(t('autorun'),(d.autoruns||[]).length+' '+t('programs'),btn(t('open'),()=>act('open',{what:'startup'}),'sm')),kBool('autorun_watch'),row(t('uptime'),t('uptime_d'),up)),
+s.caps.limit&&section(t('care'),row(t('limit'),t('limit_d'),sw(s.limitOn,t('limit'),()=>act('limit').then(()=>setTimeout(loadState,1500)))),kBool('precharge')))]}
+function pageSettings(s){
+return[h('h1',null,t('settings')),h('div',{class:'g2'},
+section(t('program'),kSel('lang',[['ru','Русский'],['uk','Українська'],['en','English']]),kSel('theme',[['dark',t('dark')],['light',t('light')]],null,THEME,v=>{THEME=v;localStorage.setItem('theme',v);applyTheme();render()}),kSel('click',[['panel',t('cl_panel')],['toggle',t('cl_toggle')]]),row(t('autostart'),null,sw(s.autostart,t('autostart'),()=>act('autostart'))),kBool('hotkey'),kBool('update_check'),on('update_check')&&kInput('update_repo','text',t('k_update_repo_d'),'vkardin/blackoutmode'),row(t('journal'),null,btn(t('open'),()=>act('open',{what:'log'}),'sm')),row(t('cfg_file'),null,btn(t('open'),()=>act('open',{what:'config'}),'sm')),row(t('tips'),null,btn(t('open'),()=>act('open',{what:'tips'}),'sm')),row(t('folder'),null,btn(t('open'),()=>act('open',{what:'folder'}),'sm'))),
+section(t('no_power'),s.battery&&kSel('widget',[['off',t('w_off')],['auto',t('w_auto')],['on',t('w_on')]]),s.battery&&kSel('widget_corner',['tl','tr','bl','br'].map(x=>[x,t(x)])),s.battery&&kInput('widget_opacity','number'),bankCapRow(),row(t('tg'),t('tg_d'),null),kInput('tg_token','text'),kInput('tg_chat','text'))),
+h('div',{class:'mut'},'BlackoutMode '+s.version+(s.caps.model?' · '+s.caps.vendor+' '+s.caps.model:''))]}
+const PAGES={overview:pageOverview,profiles:pageProfiles,schedule:pageSchedule,stats:pageStats,cleanup:pageCleanup,health:pageHealth,settings:pageSettings};
+const NEEDS={overview:['schedule'],schedule:['schedule'],stats:['stats'],cleanup:['cleanup'],health:['health']};
+function applyTheme(){document.documentElement.classList.toggle('light',THEME==='light')}
+function renderPanel(s){document.title='BlackoutMode panel';document.body.style.background='var(--panel)';
+return h('div',{class:'panel'},h('div',{style:'display:flex;align-items:center;justify-content:space-between;gap:12px'},h('div',null,h('div',{class:'mut'},s.mode==='blackout'&&s.since?t('since')+' '+s.since:t('profile')),h('h1',null,modeTitle(s))),sw(s.mode==='blackout',t('p_blackout'),()=>act('toggle'))),
+h('div',{style:'display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px'},wattsMetric(s),lastsMetric(s)),batBlock(s),
+s.sched.known&&h('div',{class:'mut'},s.sched.state==='off'?t('power_back')+' ≈ '+(s.sched.changeAt||'—'):s.sched.nextOff?t('next_off')+' ≈ '+s.sched.nextOff:t('no_off')),
+h('div',{class:'p3'},profButtons(s)),h('button',{class:'link',onclick:()=>act('open',{what:'main'}).then(()=>{if(HOST)post('close');else window.close()})},t('open_app')))}
+function render(){if(!S)return;const root=document.getElementById('root');const ae=document.activeElement;if(ae&&root.contains(ae)&&/INPUT|SELECT/.test(ae.tagName)&&ae.type!=='checkbox')return;
+const y=window.scrollY;root.replaceChildren(PANEL?renderPanel(S):h('div',{class:'app'},h('nav',{'aria-label':'BlackoutMode'},h('div',{class:'brand',html:icon('bolt',20)+'<span>BlackoutMode</span>'}),Object.keys(PAGES).map(p=>h('button',{class:'nv'+(p===page?' on':''),'aria-current':p===page?'page':null,onclick:()=>{location.hash=p},html:icon(p)+'<span>'+t(p)+'</span>'}))),h('main',null,h('div',{class:'wrap'},(PAGES[page]||pageOverview)(S))),HOST&&h('div',{class:'tbar',onmousedown:e=>{if(e.button===0&&!e.target.closest('button'))post('drag')}},h('button',{'aria-label':'Minimize',onclick:()=>post('min'),html:'<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12"><path d="M2 6h8" stroke="currentColor" stroke-width="1.2"/></svg>'}),h('button',{class:'x','aria-label':'Close',onclick:()=>post('close'),html:'<svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.2"/></svg>'}))));window.scrollTo(0,y);if(PANEL&&HOST){const p=root.firstChild;if(p)post('h:'+Math.ceil(p.getBoundingClientRect().height))}}
+let sentReady=false;
+function fail(e){post('err:'+(e&&e.message||e));if(!S){const r=document.getElementById('root');r.replaceChildren(h('div',{style:'padding:60px 30px;color:var(--sec)'},'BlackoutMode: '+(e&&e.message||e)))}}
+async function loadState(){try{const s=await get('state');if(!s||s.error)throw new Error('state '+(s&&s.error));S=s;if(S.lang&&S.lang!==LANG){LANG=S.lang;document.documentElement.lang=LANG}render();askBank(s);if(!sentReady){sentReady=true;post('ready')}}catch(e){fail(e)}}
+let ASK=0;function askBank(s){if(PANEL||!s.ask||s.ask===ASK)return;ASK=s.ask;if(Date.now()-s.ask>20000||!s.bankCap)return;if(page!=='overview'){page='overview';history.replaceState(null,'','#overview')}render();const b=document.getElementById('bankbtn');if(b)bankAsk(b)}
+async function loadPage(){try{for(const n of NEEDS[page]||[])DATA[n]=await get(n);render()}catch(e){}}
+window.addEventListener('hashchange',()=>{page=location.hash.slice(1)||'overview';render();loadPage()});
+if(PANEL&&!HOST){let had=false;window.addEventListener('focus',()=>had=true);window.addEventListener('blur',()=>{if(had)setTimeout(()=>{if(!document.hasFocus())window.close()},250)})}
+window.addEventListener('focus',()=>{if(!PANEL&&S)loadState()});
+window.addEventListener('error',e=>post('err:'+e.message));
+(async()=>{applyTheme();try{CFG=await get('config')}catch(e){post('err:config '+e.message)}await loadState();await loadPage();let n=0;setInterval(async()=>{if(document.hidden)return;n++;await loadState();if(PANEL)return;const busy=(page==='cleanup'&&DATA.cleanup&&DATA.cleanup.busy)||(page==='health'&&DATA.health&&DATA.health.busy);if(busy||n%5===0)loadPage()},3000)})();
+</script>
+</body>
+</html>

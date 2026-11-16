@@ -1,0 +1,70 @@
+name: Release
+
+# The release is made by itself when a new version in main_windows.go reaches
+# main (there is no release v<version> yet). It can also be started by hand
+# (Actions -> Release -> Run workflow) or by pushing a tag v1.2.3; in these two
+# cases the release of the same version is rebuilt. Tests always run first.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      publish: ${{ steps.v.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: v
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V=$(sed -n 's/^[[:space:]]*version[[:space:]]*=[[:space:]]*"\(.*\)"$/\1/p' main_windows.go)
+          test -n "$V"
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "${GITHUB_REF_NAME#v}" != "$V" ]; then echo "The tag does not match version $V in main_windows.go"; exit 1; fi
+          P=true
+          # a push to main: only when this version has no release yet
+          if [ "$GITHUB_EVENT_NAME" = push ] && [ "$GITHUB_REF_TYPE" = branch ] && gh release view "v$V" >/dev/null 2>&1; then P=false; fi
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "publish=$P" >> "$GITHUB_OUTPUT"
+          echo "Version $V, publish: $P"
+
+  release:
+    needs: plan
+    if: needs.plan.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.plan.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache: false
+      - name: Test and build
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q llvm
+          GOOS=windows GOARCH=amd64 go vet .
+          sh tools/build.sh
+      - name: Release notes from CHANGELOG.md
+        run: |
+          # the section "## <version>" up to the next "## "
+          awk -v v="$VERSION" '$0 ~ "^## " { p = ($2 == v) ; next } p' CHANGELOG.md > notes.md
+          test -s notes.md || echo "BlackoutMode $VERSION" > notes.md
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # rebuilding the same version replaces the release and moves the tag to this commit
+          if gh release view "v$VERSION" >/dev/null 2>&1; then gh release delete "v$VERSION" --cleanup-tag -y; fi
+          gh release create "v$VERSION" "dist/BlackoutMode-$VERSION.exe" "dist/BlackoutMode-$VERSION.exe.sha256" --target "$GITHUB_SHA" --title "BlackoutMode $VERSION" --notes-file notes.md
