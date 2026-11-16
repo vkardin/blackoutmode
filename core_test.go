@@ -301,8 +301,17 @@ func TestLiteGame(t *testing.T) {
 
 type stubBackend struct{}
 
+// stubLang lets the preview be opened in another language: BM_LANG=uk.
+func stubLang() string {
+	if l := os.Getenv("BM_LANG"); l != "" {
+		return l
+	}
+	return "ru"
+}
+
 func (stubBackend) Section(name string) (any, bool) {
 	c := DefaultConfig()
+	c.Lang = stubLang()
 	c.PowerbankWh = 150
 	switch name {
 	case "state":
@@ -312,7 +321,7 @@ func (stubBackend) Section(name string) (any, bool) {
 			"gpu": "asleep", "gpuUsers": []string{}, "since": "16:52",
 			"sched":  map[string]any{"known": true, "usable": true, "state": "off", "changeAt": "19:00", "nextOff": "", "region": "dnipropetrovsk", "group": "2.1"},
 			"caps":   map[string]any{"ready": true, "vendor": "LENOVO", "model": "82SA", "fan": true, "limit": true, "nvidia": true, "battery": true, "hz": true},
-			"update": os.Getenv("BM_UPD"), "lang": "ru", "setupDone": os.Getenv("BM_SETUP") == "", "autostart": true, "limitOn": true}, true
+			"update": os.Getenv("BM_UPD"), "lang": stubLang(), "setupDone": os.Getenv("BM_SETUP") == "", "autostart": true, "limitOn": true}, true
 	case "config":
 		return ConfigMap(c), true
 	case "schedule":
